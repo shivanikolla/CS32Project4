@@ -74,7 +74,7 @@ class TreeMultimap
 
     ~TreeMultimap()
     {
-        delete m_root;
+        clearNodes(m_root);
     }
     
     void insert(const KeyType& key, const ValueType& value) //runs O(log N)
@@ -146,6 +146,18 @@ class TreeMultimap
         }
 
         return Iterator();
+    }
+    
+    void clearNodes(Node<KeyType, ValueType>* node)
+    {
+        if (node == nullptr) {return;}
+        
+        clearNodes(node->left);
+        clearNodes(node->right);
+        
+        delete node;
+        node = nullptr;
+        
     }
     
 };

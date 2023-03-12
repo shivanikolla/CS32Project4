@@ -14,6 +14,8 @@ class UserDatabase
     User* get_user_from_email(const std::string& email) const;
 
   private:
+    TreeMultimap<std::string, User*> emailToUser;
+    std::vector<std::string> watchHistory;
     
 };
 
