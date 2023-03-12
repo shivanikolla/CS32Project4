@@ -4,15 +4,24 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include "treemm.h"
 using namespace std;
 
 UserDatabase::UserDatabase() { }
+
+UserDatabase::~UserDatabase()
+{
+    users.clear();
+}
 
 bool UserDatabase::load(const string& filename)
 {
     std::ifstream infile(filename);
     std::string line;
     int checkpoint = 0;
+    
+//    fstream read;
+//    read.open(filename, ios::in);
     
     if (infile)
     {
@@ -39,33 +48,34 @@ bool UserDatabase::load(const string& filename)
                 else if (checkpoint >= 3) //start of the movie ID numbers
                 {
                     watchHistory.push_back(line);
-                    emailToUser.insert(email, user);
                     checkpoint++;
-                    
                 }
             }
             
-            else
-            {
-                user = new User(email, name, watchHistory);
+            else {
+                User* user = new User(name, email, watchHistory);
+                users.push_back(user);
                 emailToUser.insert(email, user);
                 checkpoint = 0;
                 user = nullptr;
                 watchHistory.clear();
             }
-            
         }
         
     infile.close();
-        
     }
     
-    return true;  // Replace this line with correct code.
+    return true; 
 }
 
 User* UserDatabase::get_user_from_email(const string& email) const
 {
+    TreeMultimap<std::string, User*>::Iterator it = emailToUser.find(email);
     
+    if (it.is_valid())
+    {
+        return it.get_value();
+    }
     
     return nullptr;
 }

@@ -1,6 +1,7 @@
 #ifndef MOVIEDATABASE_INCLUDED
 #define MOVIEDATABASE_INCLUDED
 
+#include "treemm.h"
 #include <string>
 #include <vector>
 
@@ -17,6 +18,12 @@ class MovieDatabase
     std::vector<Movie*> get_movies_with_genre(const std::string& genre) const;
 
   private:
+    TreeMultimap<std::string, std::string> IDtoMovie;
+    TreeMultimap<std::string, std::vector<std::string>> DirectorToMovies;
+    TreeMultimap<std::string, std::vector<std::string>> ActorToMovies;
+    TreeMultimap<std::string, std::vector<std::string>> GenreToMovies;
+    
+    
 };
 
 #endif // MOVIEDATABASE_INCLUDED
