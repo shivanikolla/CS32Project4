@@ -46,18 +46,37 @@ int main()
     
     for (;;)
     {
-        cout << "Enter MovieID or quit";
-        string movieID;
-        getline(cin, movieID);
-        if (movieID == "quit")
-            return  0;
-
-        Movie* m = mdb.get_movie_from_id(movieID);
-        if (m == nullptr)
-            cout << "No movie in the database has that ID" <<endl;
-        else
-            cout << "Found " << m->get_title() <<endl;
+//        cout << "Enter MovieID or quit";
+//        string movieID;
+//        getline(cin, movieID);
+//        if (movieID == "quit")
+//            return  0;
+//
+//        Movie* m = mdb.get_movie_from_id(movieID);
+//        if (m == nullptr)
+//            cout << "No movie in the database has that ID" <<endl;
+//        else
+//            cout << "Found " << m->get_title() <<endl;
         
+        
+        
+        cout << "Enter genre name or quit";
+        string genre;
+        getline(cin, genre);
+        if (genre == "quit")
+            return 0;
+        
+        
+        std::vector<Movie*> movie = mdb.get_movies_with_genre(genre);
+        if (movie.empty())
+            cout << "No movies in the database have that actor" <<endl;
+        else
+        {
+            for (int i=0; i< movie.size(); i++) {
+                cout << movie[i]->get_title() <<endl;
+            }
+            
+        }
 //        cout << "Enter user email address (or quit): ";
 //        string email;
 //        getline(cin, email);

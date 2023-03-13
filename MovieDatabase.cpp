@@ -39,25 +39,20 @@ bool MovieDatabase::load(const string& filename)
                 if (checkPoint == 0) { //if it's the first checkpoint, it's the movieID
                     movieID = line;
                     checkPoint++;
-                
                 }
                 else if (checkPoint == 1) { //if it's the second checkpoint, it's the movieName
                     movieName = line;
                     checkPoint++;
-                  
                 }
                 else if (checkPoint == 2) { //if it's the third checkpoint, it's the releaseYear
                     releaseYear = line;
                     checkPoint++;
-                  
                 }
                 else if (checkPoint == 3) { //if it's the fourth checkpoint, it's the director
                     
                     std::istringstream iss(line);
                     std::string singleDirector;
-                    
                     while (getline(iss, singleDirector, ',')) {
-
                             directors.push_back(singleDirector);
                     }
                     
@@ -99,6 +94,7 @@ bool MovieDatabase::load(const string& filename)
                         genre.push_back(singleGenre);
                     }
                     
+                    
                 checkPoint++;
                 }
                 else if (checkPoint == 6){ //if it's the last checkpoint, it's the rating
@@ -113,12 +109,27 @@ bool MovieDatabase::load(const string& filename)
             {
                 movie = new Movie(movieID, movieName, releaseYear, directors, actors, genre, newRating);
                 movies.push_back(movie);
+                singleMovie.push_back(movie);
                 IDtoMovie.insert(movieID, movie);
+                
+                for (int i=0; i<directors.size(); i++) {
+                    DirectorToMovies.insert(directors[i], singleMovie);
+                }
+                
+                for (int i=0; i<actors.size(); i++) {
+                    ActorToMovies.insert(actors[i], singleMovie);
+
+                }
+
+                for (int i=0; i <genre.size(); i++) {
+                    GenreToMovies.insert(genre[i], singleMovie);
+                }
                 checkPoint = 0;
                 movie = nullptr;
                 actors.clear();
                 directors.clear();
                 genre.clear();
+                singleMovie.clear();
             }
         } //closes while loop
         
@@ -138,19 +149,55 @@ Movie* MovieDatabase::get_movie_from_id(const string& id) const
     return nullptr;
 }
 
-std::vector<Movie*> dummy;
 vector<Movie*> MovieDatabase::get_movies_with_director(const string& director) const
 {
-    return dummy;  // Replace this line with correct code.
+    TreeMultimap<std::string,std::vector<Movie*>>::Iterator it = DirectorToMovies.find(director);
+    std::vector<Movie*> moviesOfdirectors;
+    
+    if (!it.is_valid()) {
+        return moviesOfdirectors;
+    }
+    
+    while (it.is_valid()) {
+        int i=0;
+        moviesOfdirectors.push_back(it.get_value().at(i));
+        it.advance();
+    }
+    
+    return moviesOfdirectors;
 }
 
 vector<Movie*> MovieDatabase::get_movies_with_actor(const string& actor) const
 {
-    return dummy;  // Replace this line with correct code.
+    TreeMultimap<std::string,std::vector<Movie*>>::Iterator it = ActorToMovies.find(actor);
+    std::vector<Movie*> moviesOfactors;
+    
+    if (!it.is_valid()) {
+        return moviesOfactors;
+    }
+    while (it.is_valid()) {
+        int i=0;
+        moviesOfactors.push_back(it.get_value().at(i));
+        it.advance();
+    }
+    
+    return moviesOfactors;
 }
 
 vector<Movie*> MovieDatabase::get_movies_with_genre(const string& genre) const
 {
-    return dummy;  // Replace this line with correct code.
+    TreeMultimap<std::string,std::vector<Movie*>>::Iterator it = GenreToMovies.find(genre);
+    std::vector<Movie*> moviesOfgenre;
+    
+    if (!it.is_valid()) {
+        return moviesOfgenre;
+    }
+    
+    while (it.is_valid()) {
+        int i=0;
+        moviesOfgenre.push_back(it.get_value().at(i));
+        it.advance();
+    }
+    return moviesOfgenre;
 }
 
