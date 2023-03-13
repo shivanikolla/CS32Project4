@@ -8,9 +8,7 @@
 using namespace std;
 
 UserDatabase::UserDatabase() { }
-
-UserDatabase::~UserDatabase()
-{
+UserDatabase::~UserDatabase() {
     users.clear();
 }
 
@@ -19,10 +17,7 @@ bool UserDatabase::load(const string& filename)
     std::ifstream infile(filename);
     std::string line;
     int checkpoint = 0;
-    
-//    fstream read;
-//    read.open(filename, ios::in);
-    
+
     if (infile)
     {
         std::string email;
@@ -53,7 +48,7 @@ bool UserDatabase::load(const string& filename)
             }
             
             else {
-                User* user = new User(name, email, watchHistory);
+                user = new User(name, email, watchHistory);
                 users.push_back(user);
                 emailToUser.insert(email, user);
                 checkpoint = 0;
@@ -72,8 +67,7 @@ User* UserDatabase::get_user_from_email(const string& email) const
 {
     TreeMultimap<std::string, User*>::Iterator it = emailToUser.find(email);
     
-    if (it.is_valid())
-    {
+    if (it.is_valid()) {
         return it.get_value();
     }
     

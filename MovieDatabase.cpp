@@ -5,11 +5,13 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <iostream>
 using namespace std;
 
-MovieDatabase::MovieDatabase()
-{
-   
+MovieDatabase::MovieDatabase() { }
+
+MovieDatabase::~MovieDatabase() {
+    movies.clear();
 }
 
 bool MovieDatabase::load(const string& filename)
@@ -20,6 +22,7 @@ bool MovieDatabase::load(const string& filename)
     
     if (infile)
     {
+        Movie* movie = nullptr;
         std::string movieID;
         std::string movieName;
         std::string releaseYear;
@@ -27,6 +30,7 @@ bool MovieDatabase::load(const string& filename)
         std::vector<std::string> genre;
         std::vector<std::string> actors;
         std::string rating;
+        float newRating;
         
         while(getline(infile, line))
         {
@@ -35,56 +39,47 @@ bool MovieDatabase::load(const string& filename)
                 if (checkPoint == 0) { //if it's the first checkpoint, it's the movieID
                     movieID = line;
                     checkPoint++;
+                
                 }
                 else if (checkPoint == 1) { //if it's the second checkpoint, it's the movieName
                     movieName = line;
                     checkPoint++;
+                  
                 }
                 else if (checkPoint == 2) { //if it's the third checkpoint, it's the releaseYear
                     releaseYear = line;
                     checkPoint++;
+                  
                 }
                 else if (checkPoint == 3) { //if it's the fourth checkpoint, it's the director
                     
                     std::istringstream iss(line);
                     std::string singleDirector;
                     
-                    while (!line.empty()) {
-                        
-                        getline(iss, singleDirector, ',');
-                        if (directors.empty()) {
+                    while (getline(iss, singleDirector, ',')) {
+
                             directors.push_back(singleDirector);
-                        }
-                    
-                        else {
-                            vector<std::string>::iterator it = std::find(directors.begin(), directors.end(), singleDirector); //runs O(N)
-                            if (it == directors.end()) {
-                                directors.push_back(singleDirector);
-                            }
-                        
-                        }
-                        
                     }
+                    
+                    if (!iss.eof()) {
+                        getline(iss, singleDirector);
+                        directors.push_back(singleDirector);
+                    }
+
                     checkPoint++;
                 }
                 else if (checkPoint == 4) { //if it's the fifth checkpoint, it's the actor
+                    
                     std::istringstream iss(line);
                     std::string singleActor;
                     
-                    while (!line.empty()) {
-                        getline(iss, singleActor, ',');
-                        
-                        if (actors.empty()) {
+                    while (getline(iss, singleActor, ',')) {
                             actors.push_back(singleActor);
-                        }
-                        else
-                        {
-                            vector<std::string>::iterator it = std::find(actors.begin(), actors.end(), singleActor); //runs O(N)
-                            if (it == actors.end()) {
-                                actors.push_back(singleActor);
-                            }
-                            
-                        }
+                    }
+                    
+                    if (!iss.eof()) {
+                        getline(iss, singleActor);
+                        actors.push_back(singleActor);
                     }
                     
                     checkPoint++;
@@ -94,70 +89,68 @@ bool MovieDatabase::load(const string& filename)
                     std::istringstream iss(line);
                     std::string singleGenre;
                     
-                    while (!line.empty()) {
-                        getline(iss, singleGenre, ',');
+                    while (getline(iss, singleGenre, ',')) {
                         
-                        if (genre.empty()) {
                             genre.push_back(singleGenre);
-                        }
-                        else
-                        {
-                            vector<std::string>::iterator it = std::find(genre.begin(), genre.end(), singleGenre);
-                            
-                            if (it == genre.end()) {
-                                genre.push_back(singleGenre);
-                            }
-                            
-                        }
-                        
+                    }
+                    
+                    if (!iss.eof()) {
+                        getline(iss, singleGenre);
                         genre.push_back(singleGenre);
                     }
                     
-                    checkPoint++;
+                checkPoint++;
                 }
                 else if (checkPoint == 6){ //if it's the last checkpoint, it's the rating
                     
                     rating = line;
+                    newRating = std::stof(rating);
                     checkPoint++;
                 }
-                else
-                {
-                    IDtoMovie.insert(movieID, movieName);
-                    
-                    
-                }
                 
-            }
+            } //closes if line empty statement
             else
             {
+                movie = new Movie(movieID, movieName, releaseYear, directors, actors, genre, newRating);
+                movies.push_back(movie);
+                IDtoMovie.insert(movieID, movie);
                 checkPoint = 0;
+                movie = nullptr;
+                actors.clear();
+                directors.clear();
+                genre.clear();
             }
-        }
+        } //closes while loop
+        
+        infile.close();
+    } //closes if (infile)
  
-    }
- 
-    return false;
+    return true;
 }
 
 Movie* MovieDatabase::get_movie_from_id(const string& id) const
 {
+    TreeMultimap<std::string, Movie*>::Iterator it = IDtoMovie.find(id);
     
-    
-    return nullptr;  // Replace this line with correct code.
+    if (it.is_valid()) {
+        return it.get_value();
+    }
+    return nullptr;
 }
 
+std::vector<Movie*> dummy;
 vector<Movie*> MovieDatabase::get_movies_with_director(const string& director) const
 {
-    return vector<Movie*>();  // Replace this line with correct code.
+    return dummy;  // Replace this line with correct code.
 }
 
 vector<Movie*> MovieDatabase::get_movies_with_actor(const string& actor) const
 {
-    return vector<Movie*>();  // Replace this line with correct code.
+    return dummy;  // Replace this line with correct code.
 }
 
 vector<Movie*> MovieDatabase::get_movies_with_genre(const string& genre) const
 {
-    return vector<Movie*>();  // Replace this line with correct code.
+    return dummy;  // Replace this line with correct code.
 }
 
