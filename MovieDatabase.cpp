@@ -30,7 +30,7 @@ bool MovieDatabase::load(const string& filename)
         std::vector<std::string> genre;
         std::vector<std::string> actors;
         std::string rating;
-        float newRating;
+        float newRating = 0;
         
         while(getline(infile, line))
         {
@@ -141,27 +141,27 @@ bool MovieDatabase::load(const string& filename)
 
 Movie* MovieDatabase::get_movie_from_id(const string& id) const
 {
-    TreeMultimap<std::string, Movie*>::Iterator it = IDtoMovie.find(id);
+    TreeMultimap<std::string, Movie*>::Iterator it = IDtoMovie.find(id); //O(logN)
     
-    if (it.is_valid()) {
-        return it.get_value();
+    if (it.is_valid()) { //O(1)
+        return it.get_value(); //O(1)
     }
     return nullptr;
 }
 
-vector<Movie*> MovieDatabase::get_movies_with_director(const string& director) const
+vector<Movie*> MovieDatabase::get_movies_with_director(const string& director) const //O(logD + M)
 {
-    TreeMultimap<std::string,std::vector<Movie*>>::Iterator it = DirectorToMovies.find(director);
+    TreeMultimap<std::string,std::vector<Movie*>>::Iterator it = DirectorToMovies.find(director); //O(logD)
     std::vector<Movie*> moviesOfdirectors;
     
     if (!it.is_valid()) {
         return moviesOfdirectors;
     }
     
-    while (it.is_valid()) {
-        int i=0;
-        moviesOfdirectors.push_back(it.get_value().at(i));
-        it.advance();
+    while (it.is_valid()) {  //O(1)
+        int i=0; //O(1)
+        moviesOfdirectors.push_back(it.get_value().at(i)); //O(M) overall
+        it.advance(); //O(1)
     }
     
     return moviesOfdirectors;

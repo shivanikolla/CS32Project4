@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include "MovieDatabase.h"
+#include "UserDatabase.h"
 
 class UserDatabase;
 class MovieDatabase;
@@ -23,9 +25,11 @@ class Recommender
     Recommender(const UserDatabase& user_database,
                 const MovieDatabase& movie_database);
     std::vector<MovieAndRank> recommend_movies(const std::string& user_email,
-                                               int movie_count);
+                                               int movie_count) const;
 
   private:
+    UserDatabase m_user_database;
+    MovieDatabase m_movie_database;
 };
 
 #endif // RECOMMENDER_INCLUDED

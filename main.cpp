@@ -37,15 +37,15 @@ int main()
 //        return 1;
 //    }
 //
-    MovieDatabase mdb;
-    if (!mdb.load(MOVIE_DATAFILE))
-    {
-        cout << "Failed to load movie file" <<endl;
-        return 1;
-    }
+//    MovieDatabase mdb;
+//    if (!mdb.load(MOVIE_DATAFILE))
+//    {
+//        cout << "Failed to load movie file" <<endl;
+//        return 1;
+//    }
     
-    for (;;)
-    {
+//    for (;;)
+//    {
 //        cout << "Enter MovieID or quit";
 //        string movieID;
 //        getline(cin, movieID);
@@ -57,26 +57,26 @@ int main()
 //            cout << "No movie in the database has that ID" <<endl;
 //        else
 //            cout << "Found " << m->get_title() <<endl;
-        
-        
-        
-        cout << "Enter genre name or quit";
-        string genre;
-        getline(cin, genre);
-        if (genre == "quit")
-            return 0;
-        
-        
-        std::vector<Movie*> movie = mdb.get_movies_with_genre(genre);
-        if (movie.empty())
-            cout << "No movies in the database have that actor" <<endl;
-        else
-        {
-            for (int i=0; i< movie.size(); i++) {
-                cout << movie[i]->get_title() <<endl;
-            }
-            
-        }
+//
+//
+//
+//        cout << "Enter actor name or quit";
+//        string genre;
+//        getline(cin, genre);
+//        if (genre == "quit")
+//            return 0;
+//
+//
+//        std::vector<Movie*> movie = mdb.get_movies_with_actor(genre);
+//        if (movie.empty())
+//            cout << "No movies in the database have that actor" <<endl;
+//        else
+//        {
+//            for (int i=0; i< movie.size(); i++) {
+//                cout << movie[i]->get_title() <<endl;
+//            }
+//
+//        }
 //        cout << "Enter user email address (or quit): ";
 //        string email;
 //        getline(cin, email);
@@ -87,7 +87,7 @@ int main()
 //            cout << "No user in the database has that email address." << endl;
 //        else
 //            cout << "Found " << u->get_full_name() << endl;
-    }
-
-    
+//    }
+//
+//
 }
