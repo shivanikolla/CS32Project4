@@ -9,6 +9,9 @@ using namespace std;
 
 UserDatabase::UserDatabase() { }
 UserDatabase::~UserDatabase() {
+    for (int i=0; i<users.size(); i++) {
+    delete users[i];
+    }
     users.clear();
 }
 

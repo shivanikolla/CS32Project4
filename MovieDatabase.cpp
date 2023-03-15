@@ -11,7 +11,15 @@ using namespace std;
 MovieDatabase::MovieDatabase() { }
 
 MovieDatabase::~MovieDatabase() {
+    
+    for (int i=0; i<movies.size(); i++) {
+        delete movies[i];
+    }
     movies.clear();
+    
+//    for (int i=0; i <singleMovie.size(); i++) {
+//        delete singleMovie[i];
+//    }
 }
 
 bool MovieDatabase::load(const string& filename)
@@ -19,6 +27,9 @@ bool MovieDatabase::load(const string& filename)
     std::ifstream infile(filename);
     std::string line;
     int checkPoint = 0;
+    
+    if (!infile)
+        return false;
     
     if (infile)
     {
