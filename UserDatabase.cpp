@@ -60,6 +60,16 @@ bool UserDatabase::load(const string& filename)
             }
         }
         
+        //creating a user object for last user because won't be created with the above loop
+        if (checkpoint > 0)
+        {
+            user = new User(name, email, watchHistory);
+            users.push_back(user);
+            emailToUser.insert(email, user);
+            user = nullptr;
+            watchHistory.clear();
+        }
+        
     infile.close();
     }
     

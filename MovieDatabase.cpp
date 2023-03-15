@@ -28,8 +28,8 @@ bool MovieDatabase::load(const string& filename)
     std::string line;
     int checkPoint = 0;
     
-    if (!infile)
-        return false;
+//    if (!infile)
+//        return false;
     
     if (infile)
     {
@@ -143,6 +143,35 @@ bool MovieDatabase::load(const string& filename)
                 singleMovie.clear();
             }
         } //closes while loop
+        
+        //accounts for the last movie in the database
+        if (checkPoint > 0) //O(1)
+        {
+            movie = new Movie(movieID, movieName, releaseYear, directors, actors, genre, newRating);
+            movies.push_back(movie);
+            singleMovie.push_back(movie);
+            IDtoMovie.insert(movieID, movie);
+            
+            for (int i=0; i<directors.size(); i++) {
+                DirectorToMovies.insert(directors[i], singleMovie);
+            }
+            
+            for (int i=0; i<actors.size(); i++) {
+                ActorToMovies.insert(actors[i], singleMovie);
+
+            }
+
+            for (int i=0; i <genre.size(); i++) {
+                GenreToMovies.insert(genre[i], singleMovie);
+            }
+            checkPoint = 0;
+            movie = nullptr;
+            actors.clear();
+            directors.clear();
+            genre.clear();
+            singleMovie.clear();
+            
+        }
         
         infile.close();
     } //closes if (infile)

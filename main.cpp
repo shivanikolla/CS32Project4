@@ -4,6 +4,7 @@
 #include "Movie.h"
 #include <iostream>
 #include <string>
+#include "Recommender.h"
 using namespace std;
 
 //////////////////////////i/////////////////////////////////////////////////////
@@ -35,19 +36,24 @@ const string MOVIE_DATAFILE = "/Users/shivanikolla/Desktop/CS32Project4/CS32Proj
 
 int main()
 {
-//    UserDatabase udb;
-//    if (!udb.load(USER_DATAFILE))  // In skeleton, load always return false
-//    {
-//        cout << "Failed to load user data file " << USER_DATAFILE << "!" << endl;
-//        return 1;
-//    }
-//
+    UserDatabase udb;
+    udb.load(USER_DATAFILE);
+    if (!udb.load(USER_DATAFILE))  // In skeleton, load always return false
+    {
+        cout << "Failed to load user data file " << USER_DATAFILE << "!" << endl;
+        return 1;
+    }
+
     MovieDatabase mdb;
+    mdb.load(MOVIE_DATAFILE);
     if (!mdb.load(MOVIE_DATAFILE))
     {
         cout << "Failed to load movie file" <<endl;
         return 1;
     }
+    
+    Recommender r(udb, mdb);
+    r.recommend_movies("climberkip@gmail.com", 10);
     
 //    for (;;)
 //    {
@@ -62,26 +68,26 @@ int main()
 //            cout << "No movie in the database has that ID" <<endl;
 //        else
 //            cout << "Found " << m->get_title() <<endl;
+
 //
 //
+//        cout << "Enter actor name or quit";
+//        string genre;
+//        getline(cin, genre);
+//        if (genre == "quit")
+//            return 0;
 //
-        cout << "Enter actor name or quit";
-        string genre;
-        getline(cin, genre);
-        if (genre == "quit")
-            return 0;
-
-
-        std::vector<Movie*> movie = mdb.get_movies_with_actor(genre);
-        if (movie.empty())
-            cout << "No movies in the database have that actor" <<endl;
-        else
-        {
-            for (int i=0; i< movie.size(); i++) {
-                cout << movie[i]->get_title() <<endl;
-            }
-
-        }
+//
+//        std::vector<Movie*> movie = mdb.get_movies_with_actor(genre);
+//        if (movie.empty())
+//            cout << "No movies in the database have that actor" <<endl;
+//        else
+//        {
+//            for (int i=0; i< movie.size(); i++) {
+//                cout << movie[i]->get_title() <<endl;
+//            }
+//
+//        }
 //        cout << "Enter user email address (or quit): ";
 //        string email;
 //        getline(cin, email);

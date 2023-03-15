@@ -69,7 +69,7 @@ class TreeMultimap
 
     TreeMultimap()
     {
-        m_root = nullptr;
+        m_root = nullptr; //by default
     }
 
     ~TreeMultimap()
@@ -77,7 +77,7 @@ class TreeMultimap
         clearNodes(m_root);
     }
     
-    void insert(const KeyType& key, const ValueType& value) //runs O(log N)
+    void insert(const KeyType& key, const ValueType& value) //runs O(log N) with the help of recursion
     {
         if (m_root == nullptr)
         {
@@ -89,7 +89,7 @@ class TreeMultimap
         
     }
 
-    Iterator find(const KeyType& key) const //runs O(log N)
+    Iterator find(const KeyType& key) const //runs O(log N) with the help of recursion
     {
         if (m_root->key == key)
         {

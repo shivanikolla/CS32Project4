@@ -28,24 +28,24 @@ class Recommender
                                                int movie_count) const;
 
   private:
-    UserDatabase m_user_database;
-    MovieDatabase m_movie_database;
+    const UserDatabase* m_user_database;
+    const MovieDatabase* m_movie_database;
     
-    bool compareScore(const MovieAndRank& a, const MovieAndRank& b)
-    {
-        
-        if (a.compatibility_score != b.compatibility_score)
-        {
-            return a.compatibility_score > b.compatibility_score; //return true if a has higher compatibility score
-        }
-        //else if
-            // return the movie with the higher rating
-        //else
-            //return based on the movies titles
-        
-        
-        return true;
-    }
+//    bool compareScore(const MovieAndRank& a, const MovieAndRank& b)
+//    {
+//
+//        if (a.compatibility_score != b.compatibility_score)
+//        {
+//            return a.compatibility_score > b.compatibility_score; //return true if a has higher compatibility score
+//        }
+//        //else if
+//            // return the movie with the higher rating
+//        //else
+//            //return based on the movies titles
+//
+//
+//        return true;
+//    }
 
 };
 
