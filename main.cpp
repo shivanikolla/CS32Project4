@@ -26,13 +26,12 @@ using namespace std;
   // data files to makde debuggiing easier, so you can replace the string
   // literals with the names of those smaller files.
 
-//g32 paths for testing
-//const string USER_DATAFILE = " "
-//const string MOVIE_DATAFILE = " "
-
-
 const string USER_DATAFILE  = "/Users/shivanikolla/Desktop/CS32Project4/CS32Project4/users.txt";
 const string MOVIE_DATAFILE = "/Users/shivanikolla/Desktop/CS32Project4/CS32Project4/movies.txt";
+
+//g32 testing
+//const string USER_DATAFILE  = "users.txt";
+//const string MOVIE_DATAFILE = "movies.txt";
 
 int main()
 {
@@ -53,7 +52,26 @@ int main()
     }
     
     Recommender r(udb, mdb);
-    r.recommend_movies("climberkip@gmail.com", 10);
+    vector<MovieAndRank> recommendations =   r.recommend_movies("climberkip@gmail.com", 2);
+    
+    if (recommendations.empty())
+        cout << "We found no movies to recommend :(" <<endl;
+    
+    else
+    {
+        for (int i=0; i < recommendations.size(); i++)
+        {
+            const MovieAndRank& mr = recommendations[i];
+            Movie* m = mdb.get_movie_from_id(mr.movie_id);
+            cout << i+1 << ". " << m->get_title() << "( " << m->get_release_year() << ")\n Rating: " << m->get_rating() << "\n Compatability Score: " << mr.compatibility_score << "\n";
+            
+        }
+        
+        
+        
+    }
+    
+  
     
 //    for (;;)
 //    {

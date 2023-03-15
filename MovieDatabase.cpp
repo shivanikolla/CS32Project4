@@ -28,8 +28,8 @@ bool MovieDatabase::load(const string& filename)
     std::string line;
     int checkPoint = 0;
     
-//    if (!infile)
-//        return false;
+    if (!infile)
+        return false;
     
     if (infile)
     {
@@ -144,7 +144,7 @@ bool MovieDatabase::load(const string& filename)
             }
         } //closes while loop
         
-        //accounts for the last movie in the database
+        //accounts for the last movie in the database because won't be created with the logic of the loop above
         if (checkPoint > 0) //O(1)
         {
             movie = new Movie(movieID, movieName, releaseYear, directors, actors, genre, newRating);
@@ -174,7 +174,7 @@ bool MovieDatabase::load(const string& filename)
         }
         
         infile.close();
-    } //closes if (infile)
+    }
  
     return true;
 }

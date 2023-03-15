@@ -20,6 +20,9 @@ bool UserDatabase::load(const string& filename)
     std::ifstream infile(filename);
     std::string line;
     int checkpoint = 0;
+    
+    if (!infile)
+        return false;
 
     if (infile)
     {
@@ -50,7 +53,7 @@ bool UserDatabase::load(const string& filename)
                 }
             }
             
-            else {
+            else { //otherwise if the line is empty, that means all the data associated with that user is done being read in and you can create a user object
                 user = new User(name, email, watchHistory);
                 users.push_back(user);
                 emailToUser.insert(email, user);
@@ -81,7 +84,7 @@ User* UserDatabase::get_user_from_email(const string& email) const
     TreeMultimap<std::string, User*>::Iterator it = emailToUser.find(email);
     
     if (it.is_valid()) {
-        return it.get_value();
+        return it.get_value(); //returning the User pointer associated with the email from the TreeMultimap created above
     }
     
     return nullptr;

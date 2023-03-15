@@ -12,7 +12,7 @@ struct Node
         node_value.push_back(value);
         left = right = nullptr;
     }
-    
+
     KeyType key;
     std::vector<ValueType> node_value;
     Node* left;
@@ -99,7 +99,9 @@ class TreeMultimap
     }
 
   private:
+    
     Node<KeyType, ValueType>* m_root;
+    
     
     void insertHelper(const KeyType& key, const ValueType& value, Node<KeyType,ValueType>* &current)
     {
@@ -148,7 +150,7 @@ class TreeMultimap
         return Iterator();
     }
     
-    void clearNodes(Node<KeyType, ValueType>* node)
+    void clearNodes(Node<KeyType, ValueType>* node) //function to recursively delete all nodes, gets called in the destructor
     {
         if (node == nullptr) {return;}
         

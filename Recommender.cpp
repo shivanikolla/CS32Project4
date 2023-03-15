@@ -24,13 +24,17 @@ vector<MovieAndRank> Recommender::recommend_movies(const string& user_email, int
     User* user = m_user_database->get_user_from_email(user_email); //using the email provided
   
     if (user == nullptr) //the email provided is not valid
-        return vector<MovieAndRank>();
-//
+        return vector<MovieAndRank>(); //return empty vector
+
     vector<string> watch_history = user->get_watch_history(); //using the user pointer to get the users watch history
     map<string, int> movieToScores; //using the map data structure to keep track of a movie and its compatibility score
-                                    //this will be helpful in the case that a director, actor, or genre is associated with the same movie
     
-    for (int i=0; i <watch_history.size(); i++) //looping through the watch history to get the directors, actors, and genres associated with the user
+    //new plan create seperate count maps for actors, genres, and directors to prevent double counting and actor to a movie more than once
+    map<string, int> directorToMoviesCount;
+    map<string, int> actorToMoviesCount;
+    map<string, int> genreToMoviesCount;
+    
+    for (int i=0; i < watch_history.size(); i++) //looping through the watch history to get the directors, actors, and genres associated with the each movie
     {
 
         Movie* m = m_movie_database->get_movie_from_id(watch_history[i]); //getting the movie pointer associated to the movie in the watch history
@@ -42,9 +46,9 @@ vector<MovieAndRank> Recommender::recommend_movies(const string& user_email, int
         for (int j=0; j < directors.size(); j++) {
             vector<Movie*> directorToMovies = m_movie_database->get_movies_with_director(directors[j]);//getting all of the movies associated with a director
 
-            for (int k=0; k < directorToMovies.size(); k++)
-            {
+            for (int k=0; k < directorToMovies.size(); k++) {
                     movieToScores[directorToMovies[k]->get_id()] +=20;
+                      
             }
         }
 
@@ -52,8 +56,8 @@ vector<MovieAndRank> Recommender::recommend_movies(const string& user_email, int
             vector<Movie*> actorToMovies = m_movie_database->get_movies_with_actor(actors[j]); //getting all of the movies associated with an actor
 
             for (int k=0; k < actorToMovies.size(); k++) {
-
-                movieToScores[actorToMovies[i]->get_id()] +=30;
+                
+                    movieToScores[actorToMovies[k]->get_id()] +=30;
             }
         }
 
@@ -61,16 +65,15 @@ vector<MovieAndRank> Recommender::recommend_movies(const string& user_email, int
             vector<Movie*> genreToMovies = m_movie_database->get_movies_with_genre(genre[j]); //getting all of the movies associated with a genre
 
             for (int k=0; k < genreToMovies.size(); k++) {
-
+            
                 movieToScores[genreToMovies[k]->get_id()] +=1;
+               
+
             }
         }
 
-        
-
     }
 
-//
 //    //now, we will remove the movies the user has already watched from our movieToScores map so it doesn't get recommended because the user has already seen it
     for (int i=0; i < watch_history.size(); i++)
     {
@@ -78,29 +81,37 @@ vector<MovieAndRank> Recommender::recommend_movies(const string& user_email, int
     }
     
     //now, we will sort the movies based on the given criteria to provide a correct recommendation
-    vector<MovieAndRank> sortedMovies;
+   
+    vector<temporaryMovieAndRank> moviesToSort;
     for (map<string, int>::iterator it = movieToScores.begin(); it != movieToScores.end(); it++) //first, we will make a vector of MovieAndRank objects using the map we created
     {
-        MovieAndRank m(it->first, it->second); //it->first refers to the movieID associated with the map and it->second refers to the compatibilityscore
-        sortedMovies.push_back(m); //add this object to the vector
-    }
-    
-    for (int i=0; i < sortedMovies.size(); i++)
-    {
-        cout << sortedMovies[i].movie_id <<endl;
+        Movie* temp = m_movie_database->get_movie_from_id(it->first);
         
+        temporaryMovieAndRank object(it->first, it->second/2, temp->get_rating(), temp->get_title());
+        moviesToSort.push_back(object);
     }
     
     //using the std::sort function, we can sort this vector of MovieAndRank objects
     //I have overloaded the compare operator, which can be found defined in the private
-//
-//    sort(sortedMovies.begin(), sortedMovies.end());
+    sort(moviesToSort.begin(), moviesToSort.end(), compareScore);
     
+    //resizing the vector to fit the movie_count parameter
+    while (moviesToSort.size()> movie_count)
+    {
+        moviesToSort.pop_back();
+    }
+  
     
-    //need to resize the vector to fit the number by movie_count
+    //now after the comparisons have been made, making a vector of MovieAndRank objects
+    vector<MovieAndRank> sortedMovies;
+    for (vector<temporaryMovieAndRank>::iterator it = moviesToSort.begin(); it != moviesToSort.end(); it++)
+    {
+        MovieAndRank mAr((*it).movie_id, (*it).compatibility_score);
+        sortedMovies.push_back(mAr);
+    }
+
     
     return sortedMovies; //return the resulting vector
     
-
 }
 
