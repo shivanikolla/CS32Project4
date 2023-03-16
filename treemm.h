@@ -4,24 +4,9 @@
 #include <vector>
 
 template <typename KeyType, typename ValueType>
-struct Node
-{
-    Node(const KeyType newKey, ValueType value)
-    {
-        key = newKey;
-        node_value.push_back(value);
-        left = right = nullptr;
-    }
-
-    KeyType key;
-    std::vector<ValueType> node_value;
-    Node* left;
-    Node* right;
-};
-
-template <typename KeyType, typename ValueType>
 class TreeMultimap
 {
+    struct Node;
   public:
     class Iterator
     {
@@ -100,10 +85,25 @@ class TreeMultimap
 
   private:
     
-    Node<KeyType, ValueType>* m_root;
+//    template <typename KeyType, typename ValueType>
+    struct Node
+    {
+        Node(const KeyType newKey, ValueType value)
+        {
+            key = newKey;
+            node_value.push_back(value);
+            left = right = nullptr;
+        }
+
+        KeyType key;
+        std::vector<ValueType> node_value;
+        Node* left;
+        Node* right;
+    };
     
+    Node* m_root;
     
-    void insertHelper(const KeyType& key, const ValueType& value, Node<KeyType,ValueType>* &current)
+    void insertHelper(const KeyType& key, const ValueType& value, Node* &current)
     {
         if (current->key == key) {
             current->node_value.push_back(value);
@@ -111,13 +111,13 @@ class TreeMultimap
         }
         
         else if (current->left == nullptr && current->key > key) {
-            Node<KeyType, ValueType>* newNode = new Node(key, value);
+            Node* newNode = new Node(key, value);
             current->left = newNode;
             return;
         }
         
         else if (current->right == nullptr && current->key < key) {
-            Node<KeyType, ValueType>* newNode = new Node(key, value);
+            Node* newNode = new Node(key, value);
             current->right = newNode;
             return;
         }
@@ -132,7 +132,7 @@ class TreeMultimap
         }
     }
     
-    Iterator findHelper(const KeyType& key, Node<KeyType, ValueType>* current) const
+    Iterator findHelper(const KeyType& key, Node* current) const
     {
         if(current == nullptr) return Iterator();
         
@@ -150,7 +150,7 @@ class TreeMultimap
         return Iterator();
     }
     
-    void clearNodes(Node<KeyType, ValueType>* node) //function to recursively delete all nodes, gets called in the destructor
+    void clearNodes(Node* node) //function to recursively delete all nodes, gets called in the destructor
     {
         if (node == nullptr) {return;}
         

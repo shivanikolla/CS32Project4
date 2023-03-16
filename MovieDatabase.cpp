@@ -17,9 +17,6 @@ MovieDatabase::~MovieDatabase() {
     }
     movies.clear();
     
-//    for (int i=0; i <singleMovie.size(); i++) {
-//        delete singleMovie[i];
-//    }
 }
 
 bool MovieDatabase::load(const string& filename)
@@ -120,27 +117,25 @@ bool MovieDatabase::load(const string& filename)
             {
                 movie = new Movie(movieID, movieName, releaseYear, directors, actors, genre, newRating);
                 movies.push_back(movie);
-                singleMovie.push_back(movie);
                 IDtoMovie.insert(movieID, movie);
                 
                 for (int i=0; i<directors.size(); i++) {
-                    DirectorToMovies.insert(directors[i], singleMovie);
+                    DirectorToMovies.insert(directors[i], movie);
                 }
                 
                 for (int i=0; i<actors.size(); i++) {
-                    ActorToMovies.insert(actors[i], singleMovie);
+                    ActorToMovies.insert(actors[i], movie);
 
                 }
 
                 for (int i=0; i <genre.size(); i++) {
-                    GenreToMovies.insert(genre[i], singleMovie);
+                    GenreToMovies.insert(genre[i], movie);
                 }
                 checkPoint = 0;
                 movie = nullptr;
                 actors.clear();
                 directors.clear();
                 genre.clear();
-                singleMovie.clear();
             }
         } //closes while loop
         
@@ -149,27 +144,25 @@ bool MovieDatabase::load(const string& filename)
         {
             movie = new Movie(movieID, movieName, releaseYear, directors, actors, genre, newRating);
             movies.push_back(movie);
-            singleMovie.push_back(movie);
             IDtoMovie.insert(movieID, movie);
             
             for (int i=0; i<directors.size(); i++) {
-                DirectorToMovies.insert(directors[i], singleMovie);
+                DirectorToMovies.insert(directors[i], movie);
             }
             
             for (int i=0; i<actors.size(); i++) {
-                ActorToMovies.insert(actors[i], singleMovie);
+                ActorToMovies.insert(actors[i], movie);
 
             }
 
             for (int i=0; i <genre.size(); i++) {
-                GenreToMovies.insert(genre[i], singleMovie);
+                GenreToMovies.insert(genre[i], movie);
             }
             checkPoint = 0;
             movie = nullptr;
             actors.clear();
             directors.clear();
             genre.clear();
-            singleMovie.clear();
             
         }
         
@@ -191,7 +184,7 @@ Movie* MovieDatabase::get_movie_from_id(const string& id) const
 
 vector<Movie*> MovieDatabase::get_movies_with_director(const string& director) const //O(logD + M)
 {
-    TreeMultimap<std::string,std::vector<Movie*>>::Iterator it = DirectorToMovies.find(director); //O(logD)
+    TreeMultimap<std::string, Movie*>::Iterator it = DirectorToMovies.find(director); //O(logD)
     std::vector<Movie*> moviesOfdirectors;
     
     if (!it.is_valid()) {
@@ -199,34 +192,33 @@ vector<Movie*> MovieDatabase::get_movies_with_director(const string& director) c
     }
     
     while (it.is_valid()) {  //O(1)
-        int i=0; //O(1)
-        moviesOfdirectors.push_back(it.get_value().at(i)); //O(M) overall
+     
+        moviesOfdirectors.push_back(it.get_value()); //O(M) overall
         it.advance(); //O(1)
     }
     
     return moviesOfdirectors;
 }
 
-vector<Movie*> MovieDatabase::get_movies_with_actor(const string& actor) const
+vector<Movie*> MovieDatabase::get_movies_with_actor(const string& actor) const //O(logD + M)
 {
-    TreeMultimap<std::string,std::vector<Movie*>>::Iterator it = ActorToMovies.find(actor);
+    TreeMultimap<std::string,Movie*>::Iterator it = ActorToMovies.find(actor);
     std::vector<Movie*> moviesOfactors;
     
     if (!it.is_valid()) {
         return moviesOfactors;
     }
     while (it.is_valid()) {
-        int i=0;
-        moviesOfactors.push_back(it.get_value().at(i));
+        moviesOfactors.push_back(it.get_value());
         it.advance();
     }
     
     return moviesOfactors;
 }
 
-vector<Movie*> MovieDatabase::get_movies_with_genre(const string& genre) const
+vector<Movie*> MovieDatabase::get_movies_with_genre(const string& genre) const //O(logD + M0
 {
-    TreeMultimap<std::string,std::vector<Movie*>>::Iterator it = GenreToMovies.find(genre);
+    TreeMultimap<std::string,Movie*>::Iterator it = GenreToMovies.find(genre);
     std::vector<Movie*> moviesOfgenre;
     
     if (!it.is_valid()) {
@@ -234,10 +226,8 @@ vector<Movie*> MovieDatabase::get_movies_with_genre(const string& genre) const
     }
     
     while (it.is_valid()) {
-        int i=0;
-        moviesOfgenre.push_back(it.get_value().at(i));
+        moviesOfgenre.push_back(it.get_value());
         it.advance();
     }
     return moviesOfgenre;
 }
-

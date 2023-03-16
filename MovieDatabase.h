@@ -20,14 +20,13 @@ class MovieDatabase
 
   private:
     TreeMultimap<std::string, Movie*> IDtoMovie;
-    TreeMultimap<std::string, std::vector<Movie*>> DirectorToMovies;
-    TreeMultimap<std::string, std::vector<Movie*>> ActorToMovies;
-    TreeMultimap<std::string, std::vector<Movie*>> GenreToMovies;
+    TreeMultimap<std::string, Movie*> DirectorToMovies;
+    TreeMultimap<std::string, Movie*> ActorToMovies;
+    TreeMultimap<std::string, Movie*> GenreToMovies;
     std::vector<Movie*> movies;
-    std::vector<Movie*> singleMovie;
+  
 //
     
 };
 
 #endif // MOVIEDATABASE_INCLUDED
-

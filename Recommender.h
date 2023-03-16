@@ -31,12 +31,12 @@ class Recommender
     
     struct temporaryMovieAndRank
     {
-        temporaryMovieAndRank(const std::string& id, int score, int rating, const std::string& name):movie_id(id), compatibility_score(score), movie_rating(rating), movie_name(name)
+        temporaryMovieAndRank(const std::string& id, int score, float rating, const std::string& name):movie_id(id), compatibility_score(score), movie_rating(rating), movie_name(name)
         {}
 
         std::string movie_id;
         int compatibility_score;
-        int movie_rating;
+        float movie_rating;
         std::string movie_name;
     };
     
@@ -45,12 +45,18 @@ class Recommender
     
     static bool compareScore(const temporaryMovieAndRank& a, const temporaryMovieAndRank& b) //CANNOT access any non static member variables
     {
-        if (a.compatibility_score != b.compatibility_score)  //if the scores of a and b are not equal to each other,
+        if (a.compatibility_score != b.compatibility_score)//if the scores of a and b are not equal to each other,
+        {
             return a.compatibility_score > b.compatibility_score;     //return true if a is bigger than b
+        }
         else if (a.movie_rating != b.movie_rating)
+        {
             return a.movie_rating > b.movie_rating;
+        }
         else
+        {
             return a.movie_name < b.movie_name; //string comparison is different, if the first name is less than second name that means they are in the correct order
+        }
          
     }
 
