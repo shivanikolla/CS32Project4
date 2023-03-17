@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <iostream>
 #include <algorithm>
+#include <cctype>
 using namespace std;
 
 Recommender::Recommender(const UserDatabase& user_database,
@@ -34,7 +35,6 @@ vector<MovieAndRank> Recommender::recommend_movies(const string& user_email, int
     {
 
         Movie* m = m_movie_database->get_movie_from_id(watch_history[i]); //getting the movie pointer associated to the movie in the watch history
- 
             vector<string> directors = m->get_directors(); //getting all the directors associated with that movie and storing them in to a vector
             vector<string> actors = m->get_actors(); //getting all the actors associated with that movie
             vector<string> genre = m->get_genres(); //getting all the genres associated with that movie
@@ -67,11 +67,27 @@ vector<MovieAndRank> Recommender::recommend_movies(const string& user_email, int
         }
 
     }
+    
+    
 
 //    //now, we will remove the movies the user has already watched from our movieToScores map so it doesn't get recommended because the user has already seen it
     for (int i=0; i < watch_history.size(); i++)
     {
-        movieToScores.erase(watch_history[i]); //if movieToScores contains a movieID of watch history erase it from the map
+        string newWatchHistory;
+        for (int j=0; j <watch_history[i].size(); j++)
+        {
+            if (isalpha(watch_history[i].at(j)))
+            {
+                newWatchHistory += tolower(watch_history[i].at(j));
+            }
+            else
+            {
+                newWatchHistory += watch_history[i].at(j);
+            }
+            
+        }
+        
+        movieToScores.erase(newWatchHistory); //if movieToScores contains a movieID of watch history erase it from the map
     }
     
     //now, we will sort the movies based on the given criteria to provide a correct recommendation
