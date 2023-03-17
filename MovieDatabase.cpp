@@ -12,11 +12,10 @@ MovieDatabase::MovieDatabase() { }
 
 MovieDatabase::~MovieDatabase() {
     
-    for (int i=0; i<movies.size(); i++) {
+    for (int i=0; i< movies.size(); i++) {
         delete movies[i];
     }
     movies.clear();
-    
 }
 
 bool MovieDatabase::load(const string& filename)
@@ -24,28 +23,29 @@ bool MovieDatabase::load(const string& filename)
     std::ifstream infile(filename);
     std::string line;
     int checkPoint = 0;
+    Movie* movie = nullptr;
+    std::string movieID;
+    std::string movieName;
+    std::string releaseYear;
+    std::vector<std::string> directors;
+    std::vector<std::string> genre;
+    std::vector<std::string> actors;
+    std::string rating;
+    float newRating = 0;
     
     if (!infile)
         return false;
     
     if (infile)
     {
-        Movie* movie = nullptr;
-        std::string movieID;
-        std::string movieName;
-        std::string releaseYear;
-        std::vector<std::string> directors;
-        std::vector<std::string> genre;
-        std::vector<std::string> actors;
-        std::string rating;
-        float newRating = 0;
-        
+    
         while(getline(infile, line))
         {
+//            std::cerr<<line<<std::endl;
             if (!line.empty())
             {
-                if (checkPoint == 0) { //if it's the first checkpoint, it's the movieID
-                    movieID = line;
+                if (checkPoint == 0) {//if it's the first checkpoint, it's the movieID
+                    movieID = toLower(line);
                     checkPoint++;
                 }
                 else if (checkPoint == 1) { //if it's the second checkpoint, it's the movieName
@@ -61,11 +61,13 @@ bool MovieDatabase::load(const string& filename)
                     std::istringstream iss(line);
                     std::string singleDirector;
                     while (getline(iss, singleDirector, ',')) {
+                        singleDirector = toLower(singleDirector);
                             directors.push_back(singleDirector);
                     }
                     
                     if (!iss.eof()) {
                         getline(iss, singleDirector);
+                        singleDirector = toLower(singleDirector);
                         directors.push_back(singleDirector);
                     }
 
@@ -77,12 +79,15 @@ bool MovieDatabase::load(const string& filename)
                     std::string singleActor;
                     
                     while (getline(iss, singleActor, ',')) {
+                        singleActor = toLower(singleActor);
                             actors.push_back(singleActor);
                     }
                     
                     if (!iss.eof()) {
                         getline(iss, singleActor);
+                       singleActor = toLower(singleActor);
                         actors.push_back(singleActor);
+                     
                     }
                     
                     checkPoint++;
@@ -93,12 +98,13 @@ bool MovieDatabase::load(const string& filename)
                     std::string singleGenre;
                     
                     while (getline(iss, singleGenre, ',')) {
-                        
+                        singleGenre = toLower(singleGenre);
                             genre.push_back(singleGenre);
                     }
                     
                     if (!iss.eof()) {
                         getline(iss, singleGenre);
+                       singleGenre = toLower(singleGenre);
                         genre.push_back(singleGenre);
                     }
                     
@@ -145,17 +151,17 @@ bool MovieDatabase::load(const string& filename)
             movie = new Movie(movieID, movieName, releaseYear, directors, actors, genre, newRating);
             movies.push_back(movie);
             IDtoMovie.insert(movieID, movie);
-            
+
             for (int i=0; i<directors.size(); i++) {
                 DirectorToMovies.insert(directors[i], movie);
             }
-            
+
             for (int i=0; i<actors.size(); i++) {
                 ActorToMovies.insert(actors[i], movie);
 
             }
 
-            for (int i=0; i <genre.size(); i++) {
+            for (int i=0; i < genre.size(); i++) {
                 GenreToMovies.insert(genre[i], movie);
             }
             checkPoint = 0;
@@ -163,7 +169,7 @@ bool MovieDatabase::load(const string& filename)
             actors.clear();
             directors.clear();
             genre.clear();
-            
+
         }
         
         infile.close();
@@ -174,7 +180,10 @@ bool MovieDatabase::load(const string& filename)
 
 Movie* MovieDatabase::get_movie_from_id(const string& id) const
 {
-    TreeMultimap<std::string, Movie*>::Iterator it = IDtoMovie.find(id); //O(logN)
+    string item = id;
+    item = toLower(id);
+    
+    TreeMultimap<std::string, Movie*>::Iterator it = IDtoMovie.find(item); //O(logN)
     
     if (it.is_valid()) { //O(1)
         return it.get_value(); //O(1)
@@ -184,7 +193,10 @@ Movie* MovieDatabase::get_movie_from_id(const string& id) const
 
 vector<Movie*> MovieDatabase::get_movies_with_director(const string& director) const //O(logD + M)
 {
-    TreeMultimap<std::string, Movie*>::Iterator it = DirectorToMovies.find(director); //O(logD)
+    string item = director;
+    item = toLower(director);
+    
+    TreeMultimap<std::string, Movie*>::Iterator it = DirectorToMovies.find(item); //O(logD)
     std::vector<Movie*> moviesOfdirectors;
     
     if (!it.is_valid()) {
@@ -202,7 +214,10 @@ vector<Movie*> MovieDatabase::get_movies_with_director(const string& director) c
 
 vector<Movie*> MovieDatabase::get_movies_with_actor(const string& actor) const //O(logD + M)
 {
-    TreeMultimap<std::string,Movie*>::Iterator it = ActorToMovies.find(actor);
+    string item = actor;
+    item = toLower(actor);
+    
+    TreeMultimap<std::string,Movie*>::Iterator it = ActorToMovies.find(item);
     std::vector<Movie*> moviesOfactors;
     
     if (!it.is_valid()) {
@@ -216,9 +231,12 @@ vector<Movie*> MovieDatabase::get_movies_with_actor(const string& actor) const /
     return moviesOfactors;
 }
 
-vector<Movie*> MovieDatabase::get_movies_with_genre(const string& genre) const //O(logD + M0
+vector<Movie*> MovieDatabase::get_movies_with_genre(const string& genre) const //O(logD + M)
 {
-    TreeMultimap<std::string,Movie*>::Iterator it = GenreToMovies.find(genre);
+    string item = genre;
+    item = toLower(genre);
+    
+    TreeMultimap<std::string,Movie*>::Iterator it = GenreToMovies.find(item);
     std::vector<Movie*> moviesOfgenre;
     
     if (!it.is_valid()) {

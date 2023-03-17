@@ -10,9 +10,12 @@ Movie::Movie(const string& id, const string& title, const string& release_year,
     m_id = id;
     m_title = title;
     m_release_year = release_year;
-    m_directors = directors;
-    m_actors = actors;
-    m_genres = genres;
+    for(auto d:directors) m_directors.push_back(d);
+//    m_directors = directors;
+    for (auto d: actors) m_actors.push_back(d);
+//    m_actors = actors;
+    for (auto d: genres) m_genres.push_back(d);
+//    m_genres = genres;
     m_rating = rating;
 }
 

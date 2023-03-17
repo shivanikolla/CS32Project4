@@ -37,16 +37,24 @@ int main()
 {
     UserDatabase udb;
     udb.load(USER_DATAFILE);
+//    if (!udb.load(USER_DATAFILE))
+//    {
+//        cout << "Could not load file" <<endl;
+//    }
 
     MovieDatabase mdb;
     mdb.load(MOVIE_DATAFILE);
+//    if (!mdb.load(MOVIE_DATAFILE))
+//    {
+//        cout << "Could not load file" <<endl;
+//    }
     
     Recommender r(udb, mdb);
     vector<MovieAndRank> recommendations = r.recommend_movies("HezekF0394@aol.com", 20);
     
     if (recommendations.empty())
         cout << "We found no movies to recommend :(" <<endl;
-    
+
     else
     {
         for (int i=0; i < recommendations.size(); i++)
@@ -54,14 +62,10 @@ int main()
             const MovieAndRank& mr = recommendations[i];
             Movie* m = mdb.get_movie_from_id(mr.movie_id);
             cout << i << ". " << m->get_title() << "( " << m->get_release_year() << ")\n Rating: " << m->get_rating() << "\n Compatability Score: " << mr.compatibility_score << "\n";
-            
+
         }
-        
-        
-        
+
     }
-    
-  
     
 //    for (;;)
 //    {

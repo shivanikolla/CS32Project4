@@ -30,27 +30,21 @@ vector<MovieAndRank> Recommender::recommend_movies(const string& user_email, int
     vector<string> watch_history = user->get_watch_history(); //using the user pointer to get the users watch history
     unordered_map<string, int> movieToScores; //using the map data structure to keep track of a movie and its compatibility score
     
-    unordered_map<string, int> directorToScoresCount;
-    unordered_map<string, int> actorToScoresCount;
-    unordered_map<string, int> genreToScoresCount;
-    
     for (int i=0; i < watch_history.size(); i++) //looping through the watch history to get the directors, actors, and genres associated with the each movie
     {
 
         Movie* m = m_movie_database->get_movie_from_id(watch_history[i]); //getting the movie pointer associated to the movie in the watch history
-
+ 
             vector<string> directors = m->get_directors(); //getting all the directors associated with that movie and storing them in to a vector
             vector<string> actors = m->get_actors(); //getting all the actors associated with that movie
             vector<string> genre = m->get_genres(); //getting all the genres associated with that movie
+        
 
         for (int j=0; j < directors.size(); j++) {
             vector<Movie*> directorToMovies = m_movie_database->get_movies_with_director(directors[j]);//getting all of the movies associated with a director
-
             for (int k=0; k < directorToMovies.size(); k++) { //looping through all of the movies that have that director in it
                 
                 movieToScores[directorToMovies[k]->get_id()] +=20;
-                
-
             }
         }
 
@@ -69,7 +63,6 @@ vector<MovieAndRank> Recommender::recommend_movies(const string& user_email, int
             for (int k=0; k < genreToMovies.size(); k++) { //looping through all of the movies that have that genre in it
             
                 movieToScores[genreToMovies[k]->get_id()] +=1;
-
             }
         }
 

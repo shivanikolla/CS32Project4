@@ -4,6 +4,7 @@
 #include "treemm.h"
 #include <string>
 #include <vector>
+#include <cctype>
 
 class Movie;
 
@@ -24,8 +25,20 @@ class MovieDatabase
     TreeMultimap<std::string, Movie*> ActorToMovies;
     TreeMultimap<std::string, Movie*> GenreToMovies;
     std::vector<Movie*> movies;
-  
-//
+    
+    std::string toLower(std::string s) const
+    {
+        std::string caseInsensitive = "";
+//        
+        for (int i=0; i < s.length(); i++)
+        {
+            if (isalpha(s.at(i)))
+                caseInsensitive += tolower(s.at(i));
+            else
+                caseInsensitive += s.at(i);
+        }
+        return caseInsensitive;
+    }
     
 };
 
